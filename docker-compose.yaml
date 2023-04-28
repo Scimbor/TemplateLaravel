@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  server:
+    image: laravel_image:v1
+    tty: true
+    restart: always
+    environment:
+      DEVELOPMENT: 'true'
+    ports:
+      - 80:80
+      - 443:443
+      - 9000:9000
+    volumes:
+      - ./nginx:/etc/nginx
+      - ./nginx/logs:/var/log/nginx/
+      - ./app:/var/www/html
+      - ./php/www.conf:/etc/php/8.2/fpm/pool.d/www.conf
+      - ./php/php.ini:/etc/php/8.2/fpm/php.ini
