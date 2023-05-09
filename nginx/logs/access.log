@@ -98,3 +98,8 @@
 172.18.0.1 - - [28/Apr/2023:07:45:23 +0000] "GET /favicon.ico HTTP/1.1" 200 0 "http://localhost/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
 172.18.0.1 - - [28/Apr/2023:08:37:09 +0000] "GET / HTTP/2.0" 200 27495 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
 172.18.0.1 - - [28/Apr/2023:08:37:09 +0000] "GET /favicon.ico HTTP/2.0" 200 0 "https://localhost/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+172.18.0.1 - - [09/May/2023:16:37:28 +0000] "GET / HTTP/2.0" 200 27495 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+172.18.0.1 - - [09/May/2023:16:37:28 +0000] "GET /favicon.ico HTTP/2.0" 200 0 "https://localhost/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+172.18.0.1 - - [09/May/2023:16:37:30 +0000] "GET /favicon.ico HTTP/2.0" 200 0 "https://localhost/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+172.18.0.1 - - [09/May/2023:16:39:46 +0000] "GET / HTTP/2.0" 200 27495 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+172.18.0.1 - - [09/May/2023:16:39:46 +0000] "GET /favicon.ico HTTP/2.0" 200 0 "https://localhost/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
