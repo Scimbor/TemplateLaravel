@@ -6,7 +6,8 @@
 
 Repository usage:
 
- 1. Download repo
- 2. Add certification and private key to ```certs``` folder
- 3. Build image of Dockerfile
- 4. Run docker-compose.yaml file
+ 1. Download repo2
+ 2. Add certs folder
+ 3. Add certification and private key to ```certs``` folder
+ 4. Build image of Dockerfile
+ 5. Run docker-compose.yaml file
