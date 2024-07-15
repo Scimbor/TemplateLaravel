@@ -1,13 +1,12 @@
-FROM debian:bullseye-slim
+FROM debian:11.10-slim
 
-ENV COMPOSER_VERSION = 2.5.5
-ENV COMPOSER_ALLOW_SUPERUSER = 1
+ENV COMPOSER_VERSION=2.7.7
+ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV COMPOSER_MEMORY_LIMIT=-1
 
 USER root
 
 RUN export DEBIAN_FRONTEND=noninteractive; \
-	\
 	apt-get update; \
 	apt-get install --no-install-recommends --no-install-suggests -y locales; \
 	echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen; \
@@ -31,24 +30,24 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 	cron \
 	git \
 	nano \
-	php8.2 \
-	php8.2-fpm \
-	php8.2-cli \
-	php8.2-mysql \
-	php8.2-curl \
-	php8.2-gd \
-	php8.2-intl \
-	# php8.2-json \
-	php8.2-sqlite3 \
-	php8.2-xsl \
-	php8.2-xml \
-	php8.2-zip \
-	php8.2-soap \
-	php8.2-imagick \
-	php8.2-opcache \
-	php8.2-sybase \
-	php8.2-mbstring \
-	php8.2-dom \
+	php8.3 \
+	php8.3-fpm \
+	php8.3-cli \
+	php8.3-mysql \
+	php8.3-curl \
+	php8.3-gd \
+	php8.3-intl \
+	# php8.3-json \
+	php8.3-sqlite3 \
+	php8.3-xsl \
+	php8.3-xml \
+	php8.3-zip \
+	php8.3-soap \
+	php8.3-imagick \
+	php8.3-opcache \
+	php8.3-sybase \
+	php8.3-mbstring \
+	php8.3-dom \
 	ca-certificates \
 	exim4 \
 	wget \
@@ -63,6 +62,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN usermod -u 1000 www-data; \
 usermod -a -G users www-data;
+
+RUN chown -R www-data:www-data /var/www/html
 
 RUN composer global require laravel/installer
 
