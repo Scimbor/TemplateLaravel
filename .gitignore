@@ -1,6 +1,5 @@
-/certs
-
-# Scriptfiles
+*.crt
+*.key
 *.log
 
 
