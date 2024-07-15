@@ -1,5 +1,2 @@
-*.crt
-*.key
-*.log
-
-
+/certs/
+/nginx/logs
