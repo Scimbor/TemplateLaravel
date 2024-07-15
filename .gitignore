@@ -1,4 +1,6 @@
 /certs
-/nginx/logs/access.log
-/nginx/logs/error.log
+
+# Scriptfiles
+*.log
+
 
