@@ -1,6 +1,11 @@
 #!/bin/bash
 
+echo "Generating SSL certificates"
 
+openssl genpkey -algorithm RSA -out /etc/ssl/private/nginx-selfsigned.key
+openssl req -new -key /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/private/nginx-selfsigned.csr \
+    -subj "/C=CA/ST=QC/O=Company Inc/CN=example.com"
+openssl x509 -req -days 365 -in /etc/ssl/private/nginx-selfsigned.csr -signkey /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
 
 echo "Create directories in storage"
 
@@ -25,6 +30,7 @@ touch storage/database/database.sqlite && chmod -R 777 storage/database/database
 composer install
 
 cd /var/www/html
+
 php artisan migrate --force
 php artisan optimize
 

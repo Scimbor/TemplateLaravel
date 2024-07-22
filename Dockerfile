@@ -52,7 +52,8 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 	exim4 \
 	wget \
 	rsync \
-	mc
+	mc \
+	openssl
     
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer\
     openssl req -x509 -nodes -days 365 \
@@ -68,8 +69,8 @@ RUN chown -R www-data:www-data /var/www/html
 RUN composer global require laravel/installer
 
 COPY app /var/www/html
-COPY certs/certificate.crt /etc/ssl/certs/certificate.crt
-COPY certs/privateKey.key /etc/ssl/private/private.key
+COPY certs/ /etc/ssl/certs/
+COPY certs/ /etc/ssl/private/
 COPY php/www.conf /etc/php/8.3/fpm/pool.d/www.conf
 COPY php/php.ini /etc/php/8.3/fpm/php.ini
 COPY ./start.sh /root/start.sh
