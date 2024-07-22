@@ -55,12 +55,7 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 	mc \
 	openssl
     
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer\
-    openssl req -x509 -nodes -days 365 \
-    -subj  "/C=CA/ST=QC/O=Company Inc/CN=example.com" \
-     -newkey rsa:2048 -keyout etc/ssl/private/nginx-selfsigned.key \
-     -out etc/ssl/certs/nginx-selfsigned.crt;
-
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN usermod -u 1000 www-data; \
 usermod -a -G users www-data;
 
@@ -69,8 +64,6 @@ RUN chown -R www-data:www-data /var/www/html
 RUN composer global require laravel/installer
 
 COPY app /var/www/html
-COPY certs/ /etc/ssl/certs/
-COPY certs/ /etc/ssl/private/
 COPY php/www.conf /etc/php/8.3/fpm/pool.d/www.conf
 COPY php/php.ini /etc/php/8.3/fpm/php.ini
 COPY ./start.sh /root/start.sh
