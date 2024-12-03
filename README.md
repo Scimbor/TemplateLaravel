@@ -1,7 +1,7 @@
 # TemplateLaravel - Docker
 
 - PHP 8.3
-- Docker Compose 3.9
+- Docker Compose 3.8
 - Laravel 11
 
 Repository usage:
