@@ -1,4 +1,4 @@
-FROM debian:11.10-slim
+FROM debian:bookworm-slim 
 
 ENV COMPOSER_VERSION=2.7.7
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -17,7 +17,7 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 	##
 	apt-get install  --no-install-recommends --no-install-suggests -y wget gnupg ca-certificates apt-transport-https; \
 	wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -; \
-	echo "deb https://packages.sury.org/php/ bullseye main" | tee -a /etc/apt/sources.list.d/php.list; \
+	echo "deb https://packages.sury.org/php/ bookworm main" | tee -a /etc/apt/sources.list.d/php.list; \
 	apt-get update; \
 	##
 	apt-get install --no-install-recommends --no-install-suggests -y -m \
@@ -53,9 +53,17 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 	wget \
 	rsync \
 	mc \
-	openssl
-    
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+	openssl; \
+    ## Ustawienie domyślnej wersji PHP na 8.3
+    update-alternatives --set php /usr/bin/php8.3; \
+    update-alternatives --set php-config /usr/bin/php-config8.3; \
+    update-alternatives --set phpize /usr/bin/phpize8.3; \
+    ## Instalacja Composera
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer; \
+    ## Czystka
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*
+
 RUN usermod -u 1000 www-data; \
 usermod -a -G users www-data;
 
@@ -72,4 +80,4 @@ WORKDIR /var/www/html
 
 EXPOSE 443 80 9000
 
-CMD ["/root/start.sh"]
+ENTRYPOINT ["/root/start.sh"]
