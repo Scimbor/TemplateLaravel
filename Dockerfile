@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim 
 
-ENV COMPOSER_VERSION=2.7.7
+ARG COMPOSER_VERSION=2.8.1
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV COMPOSER_MEMORY_LIMIT=-1
 
@@ -53,13 +53,14 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 	wget \
 	rsync \
 	mc \
+	bash \
 	openssl; \
     ## Ustawienie domyślnej wersji PHP na 8.3
     update-alternatives --set php /usr/bin/php8.3; \
     update-alternatives --set php-config /usr/bin/php-config8.3; \
     update-alternatives --set phpize /usr/bin/phpize8.3; \
     ## Instalacja Composera
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer; \
+	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version="${COMPOSER_VERSION}"; \
     ## Czystka
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
