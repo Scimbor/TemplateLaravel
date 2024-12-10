@@ -7,5 +7,5 @@
 Repository usage:
 
  1. Download repo
- 2. Build image of Dockerfile
+ 2. Build image of Dockerfile with name ```laravel_image:v3```
  3. Run docker-compose.yaml file
