@@ -10,9 +10,10 @@ openssl x509 -req -days 365 -in /etc/ssl/private/nginx-selfsigned.csr -signkey /
 echo "Create directories in storage"
 
 mkdir -p "storage"
+mkdir -p "packages"
 mkdir -p "bootstrap/cache"
 
-chmod -R 777 "storage" && chmod -R 777 "bootstrap/cache"
+chmod -R 777 "storage" && chmod -R 777 "bootstrap/cache" && chmod -R 777 "packages"
 
 mkdir -p "storage/app"
 mkdir -p "storage/app/public"
