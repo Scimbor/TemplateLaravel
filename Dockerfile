@@ -71,6 +71,10 @@ RUN chown -R www-data:www-data /var/www/html
 
 RUN composer global require laravel/installer
 
+RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm@latest
+
 COPY app /var/www/html
 COPY php/www.conf /etc/php/8.3/fpm/pool.d/www.conf
 COPY php/php.ini /etc/php/8.3/fpm/php.ini

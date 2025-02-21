@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   server:
-    image: laravel_image:v4
+    image: laravel_image:v5
     tty: true
     restart: always
     environment:
