@@ -2,7 +2,8 @@
 
 - PHP 8.3.16
 - Docker Compose 3.8
-- Laravel 11.41.1
+- Laravel 11.9
+- NodeJS 22.x
 
 Repository usage:
 
