@@ -3,7 +3,7 @@
 - PHP 8.3.16
 - Docker Compose 3.8
 - Laravel 11.9
-- NodeJS 22.x
+- NodeJS 23.x
 
 Repository usage:
 
