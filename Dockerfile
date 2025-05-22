@@ -1,86 +1,128 @@
 FROM debian:bookworm-slim 
 
+# Version arguments
+ARG PHP_VERSION=8.3
+ARG NODE_VERSION=23
 ARG COMPOSER_VERSION=2.8.1
+
+# Laravel env vars
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV COMPOSER_MEMORY_LIMIT=-1
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+ENV LANG=en_US.UTF-8
+# Make PHP_VERSION available as ENV variable
+ENV PHP_VERSION=${PHP_VERSION}
 
 USER root
 
-RUN export DEBIAN_FRONTEND=noninteractive; \
-    apt-get update; \
-    apt-get install --no-install-recommends --no-install-suggests -y locales; \
-    echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen; \
-    locale-gen; \
-    echo 'export LANG=en_US.UTF-8' | tee -a /etc/profile | tee -a /etc/bash.bashrc; \
-    dpkg-reconfigure locales; \
-    ## Instalacja narzędzi systemowych
-    apt-get install --no-install-recommends --no-install-suggests -y \
-        wget \
-        curl \
-        gnupg \
-        ca-certificates \
-        apt-transport-https \
-        unzip \
-        supervisor \
-        logrotate \
-        nginx-light \
-        cron \
-        git \
-        nano \
-        rsync \
-        mc \
-        bash \
-        openssl \
-        exim4; \
-    ## Dodanie repozytorium Sury dla PHP 8.3
-    wget -qO - https://packages.sury.org/php/apt.gpg | gpg --dearmor -o /usr/share/keyrings/sury-php.gpg; \
-    echo "deb [signed-by=/usr/share/keyrings/sury-php.gpg] https://packages.sury.org/php/ bookworm main" | tee /etc/apt/sources.list.d/php.list; \
-    apt-get update; \
-    ## Instalacja PHP 8.3 i rozszerzeń
-    apt-get install --no-install-recommends --no-install-suggests -y \
-        php8.3 \
-        php8.3-fpm \
-        php8.3-cli \
-        php8.3-mysql \
-        php8.3-curl \
-        php8.3-gd \
-        php8.3-intl \
-        php8.3-sqlite3 \
-        php8.3-xsl \
-        php8.3-xml \
-        php8.3-zip \
-        php8.3-soap \
-        php8.3-imagick \
-        php8.3-opcache \
-        php8.3-mbstring \
-        php8.3-dom; \
-    ## Ustawienie domyślnej wersji PHP na 8.3
-    update-alternatives --set php /usr/bin/php8.3; \
-    update-alternatives --set php-config /usr/bin/php-config8.3; \
-    update-alternatives --set phpize /usr/bin/phpize8.3; \
-    ## Instalacja Composera
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version="${COMPOSER_VERSION}"; \
-    ## Czystka
-    apt-get clean; \
-    rm -rf /var/lib/apt/lists/*
+# System setup and locales
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y locales \
+    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+    && locale-gen en_US.UTF-8
 
-RUN usermod -u 1000 www-data; \
-    usermod -a -G users www-data
+# Install system tools and dependencies
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
+    wget \
+    curl \
+    gnupg2 \
+    ca-certificates \
+    lsb-release \
+    apt-transport-https \
+    unzip \
+    supervisor \
+    logrotate \
+    nginx-light \
+    cron \
+    git \
+    nano \
+    rsync \
+    mc \
+    bash \
+    openssl \
+    exim4
 
-RUN chown -R www-data:www-data /var/www/html
+# Add Sury PHP repository and install PHP
 
-RUN composer global require laravel/installer
+RUN curl -sSL https://packages.sury.org/php/apt.gpg -o /etc/apt/trusted.gpg.d/sury-php.gpg \
+    && echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/sury-php.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        php$PHP_VERSION \
+        php$PHP_VERSION-fpm \
+        php$PHP_VERSION-cli \
+        php$PHP_VERSION-dev \
+        php$PHP_VERSION-common \
+        php$PHP_VERSION-mysql \
+        php$PHP_VERSION-pgsql \
+        php$PHP_VERSION-sqlite3 \
+        php$PHP_VERSION-curl \
+        php$PHP_VERSION-gd \
+        php$PHP_VERSION-intl \
+        php$PHP_VERSION-xsl \
+        php$PHP_VERSION-xml \
+        php$PHP_VERSION-zip \
+        php$PHP_VERSION-soap \
+        php$PHP_VERSION-imagick \
+        php$PHP_VERSION-opcache \
+        php$PHP_VERSION-mbstring \
+        php$PHP_VERSION-dom \
+        php$PHP_VERSION-bcmath \
+        php$PHP_VERSION-redis \
+        php$PHP_VERSION-tokenizer \
+        php$PHP_VERSION-fileinfo \
+        php$PHP_VERSION-iconv \
+    && update-alternatives --install /usr/bin/php php /usr/bin/php$PHP_VERSION 1 \
+    && update-alternatives --install /usr/bin/php-config php-config /usr/bin/php-config$PHP_VERSION 1 \
+    && update-alternatives --install /usr/bin/phpize phpize /usr/bin/phpize$PHP_VERSION 1
 
-RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g npm@latest
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version="${COMPOSER_VERSION}" \
+    && composer global require laravel/installer
 
-COPY app /var/www/html
-COPY php/www.conf /etc/php/8.3/fpm/pool.d/www.conf
-COPY php/php.ini /etc/php/8.3/fpm/php.ini
+# Install Node.js and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm@latest
+
+# Clean up
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/* \
+    && rm -rf /var/tmp/*
+
+# Set up user and permissions
+RUN usermod -u 1000 www-data \
+    && usermod -a -G users www-data \
+    && mkdir -p /var/www/html \
+    && chown -R www-data:www-data /var/www/html
+
+# Copy application files
+COPY --chown=www-data:www-data app /var/www/html
+COPY php/www.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+COPY php/php.ini /etc/php/${PHP_VERSION}/fpm/php.ini
 COPY ./start.sh /root/start.sh
 
+# Set working directory
 WORKDIR /var/www/html
+
+# Create Laravel required directories and set permissions
+RUN mkdir -p \
+    storage/app/public \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/testing \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+    && chown -R www-data:www-data \
+    storage \
+    bootstrap/cache \
+    && chmod -R 775 \
+    storage \
+    bootstrap/cache
 
 EXPOSE 443 80 9000
 

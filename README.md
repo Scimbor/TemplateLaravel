@@ -8,6 +8,6 @@
 Repository usage:
 
  1. Download repo
- 2. Build image of Dockerfile with name ```laravel_image:v4```
+ 2. Build image of Dockerfile with name ```laravel_image:v6```
  3. Run docker-compose.yaml file
  4. Run ```https://localhost/``` in browser
