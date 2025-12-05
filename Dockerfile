@@ -1,9 +1,9 @@
 FROM debian:bookworm-slim 
 
 # Version arguments
-ARG PHP_VERSION=8.3
+ARG PHP_VERSION=8.4
 ARG NODE_VERSION=23
-ARG COMPOSER_VERSION=2.8.1
+ARG COMPOSER_VERSION=2.8.4
 
 # Laravel env vars
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -42,7 +42,8 @@ RUN apt-get update \
     mc \
     bash \
     openssl \
-    exim4
+    exim4 \
+    dos2unix
 
 # Add Sury PHP repository and install PHP
 
@@ -105,25 +106,26 @@ COPY php/www.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 COPY php/php.ini /etc/php/${PHP_VERSION}/fpm/php.ini
 COPY ./start.sh /root/start.sh
 
+# Convert line endings and set execution permissions for start.sh
+RUN dos2unix /root/start.sh && chmod +x /root/start.sh
+
 # Set working directory
 WORKDIR /var/www/html
 
 # Create Laravel required directories and set permissions
 RUN mkdir -p \
     storage/app/public \
-    storage/framework/cache \
+    storage/framework/cache/data \
     storage/framework/sessions \
     storage/framework/testing \
     storage/framework/views \
     storage/logs \
+    storage/database \
     bootstrap/cache \
-    && chown -R www-data:www-data \
-    storage \
-    bootstrap/cache \
-    && chmod -R 775 \
-    storage \
-    bootstrap/cache
+    packages \
+    && chown -R www-data:www-data storage bootstrap/cache packages \
+    && chmod -R 775 storage bootstrap/cache packages
 
 EXPOSE 443 80 9000
 
-ENTRYPOINT ["/root/start.sh"]
+ENTRYPOINT ["/bin/bash", "/root/start.sh"]
