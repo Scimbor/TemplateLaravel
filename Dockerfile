@@ -32,17 +32,10 @@ RUN apt-get update \
     lsb-release \
     apt-transport-https \
     unzip \
-    supervisor \
-    logrotate \
     nginx-light \
-    cron \
     git \
-    nano \
-    rsync \
-    mc \
     bash \
     openssl \
-    exim4 \
     dos2unix
 
 # Add Sury PHP repository and install PHP
