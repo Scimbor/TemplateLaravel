@@ -81,3 +81,22 @@ On first run, the container automatically:
 ## Development
 
 The `app/` folder is mounted as a volume, so code changes are immediately visible in the container.
+
+## Optimizations
+
+### Docker Infrastructure
+- **Minimal Docker image** - removed unnecessary tools (nano, mc, supervisor, logrotate, cron, rsync, exim4)
+- **.dockerignore** - excludes node_modules, vendor, build artifacts for faster builds
+- **Line endings** - .gitattributes ensures proper LF line endings for shell scripts
+- **SSL certificates** - auto-generated self-signed certificates with proper config
+
+### Startup Script
+- **Error handling** - `set -e` stops on first error
+- **Silent SSL generation** - errors suppressed with `2>/dev/null`
+- **Asset building** - automatic `npm run build` for Vite
+- **Optimized permissions** - efficient directory creation and chmod
+
+### Configuration
+- **PHP 8.4** - consistent across all configs (Nginx, PHP-FPM, Docker)
+- **OPcache enabled** - production-ready PHP configuration
+- **Proper FastCGI** - correct socket path in Nginx

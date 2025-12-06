@@ -1,17 +1,18 @@
 #!/bin/bash
+set -e
 
-echo "Generating SSL certificates"
-
-openssl genpkey -algorithm RSA -out /etc/ssl/private/nginx-selfsigned.key
+echo "Generating SSL certificates..."
+openssl genpkey -algorithm RSA -out /etc/ssl/private/nginx-selfsigned.key 2>/dev/null
 openssl req -new -key /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/private/nginx-selfsigned.csr \
-    -subj "/C=CA/ST=QC/O=Company Inc/CN=example.com"
-openssl x509 -req -days 365 -in /etc/ssl/private/nginx-selfsigned.csr -signkey /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+    -subj "/C=PL/ST=PL/O=Laravel/CN=localhost" 2>/dev/null
+openssl x509 -req -days 365 -in /etc/ssl/private/nginx-selfsigned.csr \
+    -signkey /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt 2>/dev/null
 
 cd /var/www/html
 
 # Check if Laravel is installed
 if [ ! -f "composer.json" ]; then
-    echo "Creating new Laravel 12 project..."
+    echo "Creating new Laravel project..."
     cd /var/www
     composer create-project --prefer-dist laravel/laravel:^12.0 temp_project
     mv temp_project/* temp_project/.* html/ 2>/dev/null || true
@@ -19,41 +20,31 @@ if [ ! -f "composer.json" ]; then
     cd /var/www/html
 fi
 
-echo "Installing/Updating dependencies..."
+echo "Installing dependencies..."
 composer install --no-interaction --optimize-autoloader
 npm install
+npm run build
 
-echo "Creating directories and setting permissions..."
+echo "Setting up Laravel..."
+mkdir -p storage/{app/public,framework/{cache/data,sessions,testing,views},logs,database} bootstrap/cache packages
 
-# Create all necessary directories
-mkdir -p \
-    storage/app/public \
-    storage/framework/cache/data \
-    storage/framework/sessions \
-    storage/framework/testing \
-    storage/framework/views \
-    storage/logs \
-    storage/database \
-    bootstrap/cache \
-    packages
+[ ! -f "storage/database/database.sqlite" ] && touch storage/database/database.sqlite
 
-# Create SQLite database
-touch storage/database/database.sqlite
-
-# Set permissions for all directories and files
 chown -R www-data:www-data storage bootstrap/cache packages
 chmod -R 775 storage bootstrap/cache packages
-chmod 666 storage/database/database.sqlite
+[ -f "storage/database/database.sqlite" ] && chmod 666 storage/database/database.sqlite
 
-# Generate app key if not exists
 if [ ! -f ".env" ]; then
     cp .env.example .env
-    php artisan key:generate
+    php artisan key:generate --force
 fi
 
 php artisan migrate --force
 php artisan optimize
 
+echo "Starting services..."
 /usr/sbin/service php8.4-fpm start
 /usr/sbin/service nginx start
+
+echo "Laravel is ready!"
 tail -f /dev/null

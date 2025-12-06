@@ -1,0 +1,10 @@
+# Auto detect text files
+* text=auto
+
+# Shell scripts always use LF
+*.sh text eol=lf
+
+# Docker files use LF
+Dockerfile text eol=lf
+docker-compose.yaml text eol=lf
+docker-compose.yml text eol=lf
