@@ -1,2 +1,3 @@
 /certs/
-/nginx/logs
+/nginx/logs/
+/app/storage/
