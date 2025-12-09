@@ -36,7 +36,6 @@ chmod -R 775 storage bootstrap/cache packages
 
 if [ ! -f ".env" ]; then
     cp .env.example .env
-    php artisan key:generate --force
 fi
 
 php artisan migrate --force
